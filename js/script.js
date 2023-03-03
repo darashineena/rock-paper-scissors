@@ -1,6 +1,55 @@
-function getRandomNumber(){
-    let randomNumber = Math.floor(Math.random() * 3);
-    return randomNumber;
+game();
+
+function game() {
+    let playerScore = 0;
+    let computerScore = 0;
+    for (let i = 0; i < 5; i++) {
+        switch (playRound()) {
+            case "playerWins":
+                playerScore++;
+                break;
+            case "computerWins":
+                computerScore++;
+                break;
+            case "tie":
+                break;
+            case false:
+                console.log("Cancelled.");
+                i = 100;
+                return false;
+            default:
+                break;
+        }
+    }
+    determineWinner(playerScore, computerScore);
+}
+
+function determineWinner(playerScore, computerScore) {
+    if (playerScore > computerScore) {
+        console.info(`You've won the game ${playerScore} to ${computerScore}`);
+    }
+    else if (playerScore < computerScore) {
+        console.info(`You've lost the game ${computerScore} to ${playerScore}`);
+    }
+    else console.info(`You've tied the game ${computerScore} to ${playerScore}`);
+}
+
+function playRound(){
+    let playerChoice = getPlayerChoice();
+    let computerChoice = getComputerChoice();
+    if (playerChoice === null) return false;
+    if (playerChoice == computerChoice) {
+        console.log(`It's a tie, ${playerChoice} ties with ${computerChoice}.`);
+        return "tie";
+    } 
+    else if ( (playerChoice == "rock" && computerChoice == "scissors") || (playerChoice == "paper" && computerChoice == "rock") || (playerChoice == "scissors" && computerChoice == "paper")) {
+        console.log(`You won, ${playerChoice} beats ${computerChoice}.`);
+        return "playerWins";
+    } 
+    else {
+        console.log(`You lost, ${computerChoice} beats ${playerChoice}.`);
+        return "computerWins";
+    }
 }
 
 function getComputerChoice() {
@@ -18,6 +67,11 @@ function getComputerChoice() {
     }
 }
 
+function getRandomNumber(){
+    let randomNumber = Math.floor(Math.random() * 3);
+    return randomNumber;
+}
+
 function getPlayerChoice() {
     let playerChoice = prompt("Rock, paper, or scissors?");
     let keepGoing = isNotCancelled(playerChoice);
@@ -33,7 +87,8 @@ function isNotCancelled(word){
 if (word === null) {
     alert("Cancelled.");
     return false;
-} else return true;
+} 
+else return true;
 }
 
 function checkChoiceValidity(choice) {
@@ -46,27 +101,9 @@ function checkChoiceValidity(choice) {
 function isLooping(choice) {
     if (!(isNotCancelled(choice))) {
         return false;
-    } else if (choice == "rock" || choice == "paper" || choice == "scissors" ) {
-        return false;
-        } else return true;
-}
-
-function getPlayerChoice2() {
-    let playerChoice = prompt("Rock, paper, or scissors?");
-    let keepGoing = true;
-    while (keepGoing) {
-        if (playerChoice != null) {
-         playerChoice = playerChoice.toLowerCase();
-            if (playerChoice == "rock" || playerChoice == "paper" || playerChoice == "scissors") {
-            return playerChoice;
-            } else {
-                playerChoice = prompt("That's neither rock, paper, or scissors. Please enter your choice again.")
-            }
-        } else {
-            keepGoing = false;
-            alert("Cancelled.");
-        }
     } 
+    else if (choice == "rock" || choice == "paper" || choice == "scissors" ) {
+        return false;
+    } 
+    else return true;
 }
-
-console.log(getPlayerChoice());
