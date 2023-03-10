@@ -1,56 +1,69 @@
-game();
+let playerScore = 0;
+let computerScore = 0;
+let playedRounds = 0;
+const scoreDiv = document.querySelector("#score");
+const resultsDiv = document.querySelector("#results");
+const btns = document.querySelectorAll('button');
+btns.forEach(btn => btn.addEventListener('click', (buttonClicked) => {
+    buttonClicked = btn.id;
+    playRound(buttonClicked);
+}));
 
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
-    for (let i = 0; i < 5; i++) {
-        switch (playRound()) {
-            case "playerWins":
-                playerScore++;
-                break;
-            case "computerWins":
-                computerScore++;
-                break;
-            case "tie":
-                break;
-            case false:
-                console.log("Cancelled.");
-                i = 100;
-                return false;
-            default:
-                break;
-        }
+function reset() {
+    playerScore = 0;
+    computerScore = 0;
+    playedRounds = 0;
+    scoreDiv.textContent = "";
+    resultsDiv.textContent = "Please select your choice.";
+};
+
+function determineScore(playerScore, computerScore) {
+    if (playerScore > computerScore) {
+        scoreDiv.textContent = `You are winning the game ${playerScore} to ${computerScore}`;
     }
-    determineWinner(playerScore, computerScore);
-}
+    else if (playerScore < computerScore) {
+        scoreDiv.textContent = `You are loosing the game ${computerScore} to ${playerScore}`;
+    }
+    else {
+        scoreDiv.textContent = `You are tied ${computerScore} to ${playerScore}`;
+    }
+    if (playedRounds > 5) determineWinner(playerScore, computerScore);
+};
 
 function determineWinner(playerScore, computerScore) {
     if (playerScore > computerScore) {
-        console.info(`You've won the game ${playerScore} to ${computerScore}`);
+        scoreDiv.textContent = `You've won the game ${playerScore} to ${computerScore}`;
     }
     else if (playerScore < computerScore) {
-        console.info(`You've lost the game ${computerScore} to ${playerScore}`);
+        scoreDiv.textContent = `You've lost the game ${computerScore} to ${playerScore}`;
     }
-    else console.info(`You've tied the game ${computerScore} to ${playerScore}`);
-}
+    else scoreDiv.textContent = `You've tied the game ${computerScore} to ${playerScore}`;
+};
 
-function playRound(){
-    let playerChoice = getPlayerChoice();
+function playRound(playerChoice){
+    playedRounds++;
+    console.log(playedRounds);
     let computerChoice = getComputerChoice();
-    if (playerChoice === null) return false;
-    if (playerChoice == computerChoice) {
-        console.log(`It's a tie, ${playerChoice} ties with ${computerChoice}.`);
-        return "tie";
+    if (playerChoice === "reset") reset();
+    else if (playedRounds > 5) determineWinner(playerScore, computerScore);
+    else if (playerChoice == computerChoice) {
+        resultsDiv.textContent = `It's a tie, ${playerChoice} ties with ${computerChoice}.`;
+        determineScore(playerScore, computerScore);
+        if (playedRounds === 5) determineWinner(playerScore, computerScore);
     } 
     else if ( (playerChoice == "rock" && computerChoice == "scissors") || (playerChoice == "paper" && computerChoice == "rock") || (playerChoice == "scissors" && computerChoice == "paper")) {
-        console.log(`You won, ${playerChoice} beats ${computerChoice}.`);
-        return "playerWins";
+        resultsDiv.textContent = `You won, ${playerChoice} beats ${computerChoice}.`;
+        playerScore++;
+        determineScore(playerScore, computerScore);
+        if (playedRounds === 5) determineWinner(playerScore, computerScore);
     } 
     else {
-        console.log(`You lost, ${computerChoice} beats ${playerChoice}.`);
-        return "computerWins";
+        resultsDiv.textContent = `You lost, ${computerChoice} beats ${playerChoice}.`;
+        computerScore++;
+        determineScore(playerScore, computerScore);
+        if (playedRounds === 5) determineWinner(playerScore, computerScore);
     }
-}
+};
 
 function getComputerChoice() {
     let computerChoice;
@@ -65,45 +78,9 @@ function getComputerChoice() {
             computerChoice = "scissors";
             return computerChoice;
     }
-}
+};
 
 function getRandomNumber(){
     let randomNumber = Math.floor(Math.random() * 3);
     return randomNumber;
-}
-
-function getPlayerChoice() {
-    let playerChoice = prompt("Rock, paper, or scissors?");
-    let keepGoing = isNotCancelled(playerChoice);
-    while (keepGoing) {
-        playerChoice = playerChoice.toLowerCase();
-        playerChoice = checkChoiceValidity(playerChoice);
-        keepGoing = isLooping(playerChoice);
-        }
-    return playerChoice;
-    } 
-
-function isNotCancelled(word){
-if (word === null) {
-    alert("Cancelled.");
-    return false;
-} 
-else return true;
-}
-
-function checkChoiceValidity(choice) {
-    if (!(choice == "rock" || choice == "paper" || choice == "scissors")) {
-        choice = prompt("That's neither rock, paper, or scissors. Please enter your choice again.");
-        }
-    return choice;
-}
-
-function isLooping(choice) {
-    if (!(isNotCancelled(choice))) {
-        return false;
-    } 
-    else if (choice == "rock" || choice == "paper" || choice == "scissors" ) {
-        return false;
-    } 
-    else return true;
-}
+};
